@@ -1,5 +1,6 @@
 import sys
 import math
+import random
 from dataclasses import dataclass
 
 ME = 1
@@ -60,18 +61,21 @@ while True:
 
     for tile in my_tiles:
         if tile.can_spawn:
-            amount = 0 # TODO: pick amount of robots to spawn here
+            amount = 1 # TODO: pick amount of robots to spawn here
             if amount > 0:
                 actions.append('SPAWN {} {} {}'.format(amount, tile.x, tile.y))
         if tile.can_build:
-            should_build = False # TODO: pick whether to build recycler here
+            if len(my_recyclers) < 2:
+                should_build = True # TODO: pick whether to build recycler here
+            else:
+                should_build = False # TODO: pick whether to build recycler here
             if should_build:
                 actions.append('BUILD {} {}'.format(tile.x, tile.y))
 
     for tile in my_units:
-        target = None # TODO: pick a destination tile
+        target = tiles[random.randint(0, len(tiles)-1)] # TODO: pick a destination tile
         if target:
-            amount = 0 # TODO: pick amount of units to move
+            amount = 1 # TODO: pick amount of units to move
             actions.append('MOVE {} {} {} {} {}'.format(amount, tile.x, tile.y, target.x, target.y))
 
     # To debug: print("Debug messages...", file=sys.stderr, flush=True)
