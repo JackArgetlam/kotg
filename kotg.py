@@ -32,7 +32,9 @@ while True:
     my_tiles = []
     neutral_tiles = []
 
+
     my_matter, opp_matter = [int(i) for i in input().split()]
+
     for y in range(height):
         for x in range(width):
             # owner: 1 = me, 0 = foe, -1 = neutral
@@ -56,26 +58,44 @@ while True:
                     opp_recyclers.append(tile)
             else:
                 neutral_tiles.append(tile)
+    print(len(my_tiles), file=sys.stderr, flush=True)
+
+
+
 
     actions = []
-
     for tile in my_tiles:
-        if tile.can_spawn:
+
+        if tile.can_spawn and my_matter > 10:
             amount = 1 # TODO: pick amount of robots to spawn here
             if amount > 0:
                 actions.append('SPAWN {} {} {}'.format(amount, tile.x, tile.y))
+                my_matter = my_matter - amount*10
+
+                
         if tile.can_build:
-            if len(my_recyclers) < 2:
+            if len(my_recyclers) < 0 and my_matter > 10:
                 should_build = True # TODO: pick whether to build recycler here
+                
             else:
                 should_build = False # TODO: pick whether to build recycler here
-            if should_build:
+            if should_build and my_matter > 10:
                 actions.append('BUILD {} {}'.format(tile.x, tile.y))
+                my_matter = my_matter - 10
 
     for tile in my_units:
-        target = tiles[random.randint(0, len(tiles)-1)] # TODO: pick a destination tile
+        # Target
+        if len(my_tiles) > len(opp_tiles):
+            target = opp_tiles[random.randint(0, len(opp_tiles)-1)] # TODO: pick a destination tile
+        else:
+            target = neutral_tiles[random.randint(0, len(neutral_tiles)-1)] # TODO: pick a destination tile
+
+        # Amount of units to move
         if target:
-            amount = 1 # TODO: pick amount of units to move
+            if tile.units > 1: 
+                amount = tile.units - 1 # TODO: pick amount of units to move
+            else:
+                amount = 1
             actions.append('MOVE {} {} {} {} {}'.format(amount, tile.x, tile.y, target.x, target.y))
 
     # To debug: print("Debug messages...", file=sys.stderr, flush=True)
